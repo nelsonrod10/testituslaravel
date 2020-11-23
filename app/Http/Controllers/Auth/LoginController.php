@@ -86,6 +86,9 @@ class LoginController extends Controller
         return $this->sendFailedLoginResponse($request);
     }
 
+    /**
+     * Verificación de la existencia del usuario en reqres.in
+     */
     private function sendReqResRequest($request){
         
         $response = Http::post('https://reqres.in/api/login',[
