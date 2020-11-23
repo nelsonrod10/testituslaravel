@@ -46,6 +46,13 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        /**
+         * Se especifíca el nuevo guard para el login desde reqres.in
+        */
+        'reqres' => [
+            'driver' => 'session',
+            'provider' => 'reqres',
+        ],
     ],
 
     /*
@@ -71,6 +78,13 @@ return [
             'model' => App\User::class,
         ],
 
+        /**
+         * Se especifíca el nuevo provider para el login desde reqres.in
+        */
+        'reqres' => [
+            'driver' => 'eloquent',
+            'model' => App\Reqresin::class,
+        ],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -95,6 +109,13 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'reqres' => [
+            'provider' => 'reqres',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

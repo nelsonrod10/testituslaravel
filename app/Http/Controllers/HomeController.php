@@ -8,12 +8,12 @@ class HomeController extends Controller
 {
     /**
      * Create a new controller instance.
-     *
+     * Se especifica el guard reqres como middleware
      * @return void
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth:reqres');
     }
 
     /**

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Reqresin;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
-use App\User;
-use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Foundation\Auth\RegistersUsers;
+
 
 class RegisterController extends Controller
 {
@@ -42,6 +44,14 @@ class RegisterController extends Controller
     }
 
     /**
+     * Se especifica el guard a utilizar para reqres.in
+     */
+    protected function guard()
+    {
+        return Auth::guard('reqres');
+    }
+
+    /**
      * Get a validator for an incoming registration request.
      *
      * @param  array  $data
@@ -49,9 +59,11 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
+        /**
+         * Se dejan los campos exclusivos entregados por reqres.in
+        */
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:reqresins'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -64,8 +76,10 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
+        /**
+         * Se dejan los campos exclusivos entregados por reqres.in
+        */
+        return Reqresin::create([
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
