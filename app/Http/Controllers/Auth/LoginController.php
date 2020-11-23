@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Reqresin;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
@@ -60,6 +63,7 @@ class LoginController extends Controller
     {
         $this->validateLogin($request);
 
+        $this->sendReqResRequest($request);
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
@@ -80,6 +84,24 @@ class LoginController extends Controller
         $this->incrementLoginAttempts($request);
 
         return $this->sendFailedLoginResponse($request);
+    }
+
+    private function sendReqResRequest($request){
+        
+        $response = Http::post('https://reqres.in/api/login',[
+            'Content-Type'  => 'x-www-form-urlencoded',
+            'email'     => $request[$this->username()],
+            'password'  => $request['password']
+        ]);
+
+        if($response->status() === 200){
+            Reqresin::firstOrCreate(
+                ['email' => $request[$this->username()]],
+                ['password' => Hash::make($request['password'])] 
+            );
+        }
+
+        return;
     }
 
 }
