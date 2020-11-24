@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Auth;
 
 use App\Reqresin;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Lang;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -33,6 +35,9 @@ class LoginController extends Controller
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::HOME;
+
+    protected $maxAttempts = 3; // Default is 5
+    protected $decayMinutes = 2; // Default is 1
 
     /**
      * Create a new controller instance.
@@ -152,6 +157,30 @@ class LoginController extends Controller
             $this->username() => [trans('auth.failed')],
             'reqres'          =>  $messageReqRes
         ]);
+    }
+
+    /**
+     * Redirect the user after determining they are locked out.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function sendLockoutResponse(Request $request)
+    {
+        $seconds = $this->limiter()->availableIn(
+            $this->throttleKey($request)
+        );
+
+        session(['too-many-attempts' => true]);
+
+        throw ValidationException::withMessages([
+            $this->username() => [Lang::get('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60),
+            ])],
+        ])->status(Response::HTTP_TOO_MANY_REQUESTS);
     }
 
 }

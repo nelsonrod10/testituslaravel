@@ -21,6 +21,7 @@ window.Vue = require('vue');
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('launch-modal', require('./components/LaunchModal.vue').default);
+Vue.component('timer-login', require('./components/TimerLogin.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
