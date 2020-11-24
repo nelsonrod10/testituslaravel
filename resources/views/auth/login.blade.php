@@ -81,7 +81,9 @@
                                 * El usuario ha intentado loguearse más de 3 veces, se muestra el timer
                                 **
                             -->
-                            <timer-login></timer-login>
+                            <timer-login
+                                route_login="{{route('login')}}"
+                            ></timer-login>
                         @endcan
                     </div>        
                 </div>

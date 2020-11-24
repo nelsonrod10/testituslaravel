@@ -37,7 +37,7 @@ class LoginController extends Controller
     protected $redirectTo = RouteServiceProvider::HOME;
 
     protected $maxAttempts = 3; // Default is 5
-    protected $decayMinutes = 2; // Default is 1
+    protected $decayMinutes = 5; // Default is 1
 
     /**
      * Create a new controller instance.
@@ -78,7 +78,7 @@ class LoginController extends Controller
         if (method_exists($this, 'hasTooManyLoginAttempts') &&
             $this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
-
+            
             return $this->sendLockoutResponse($request);
         }
 
@@ -173,7 +173,12 @@ class LoginController extends Controller
             $this->throttleKey($request)
         );
 
-        session(['too-many-attempts' => true]);
+        /**
+        * Se habilita una variable de session para mantener el tiempo actualizado
+        * Esta session es manejada por el controlador Auth\TimerLoginAttemtsController
+        * y es evaluada en el gate 'use-login-form' que se encuentra en AuthServiceProvider
+        */
+        session(['too-many-attempts' => $this->decayMinutes*60]);
 
         throw ValidationException::withMessages([
             $this->username() => [Lang::get('auth.throttle', [

@@ -25,7 +25,9 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-
+        /**
+         * Se define el gate que habilita el login dependiendo del número de intentos
+         */
         Gate::define('use-login-form', function (?Reqresin $user) {
             return !session('too-many-attempts');
         });

@@ -35,4 +35,10 @@ Route::get('/success-login', function(){
  */
 Route::get('/home', 'HomeController@index')->name('home');
 
+/**
+ * Rutas para gestionar el tiempo restante por intentos fallidos de login
+ */
+Route::get('/get-timer', 'Auth\TimerLoginAttemtsController@get');
+Route::get('/update-timer', 'Auth\TimerLoginAttemtsController@update');
+Route::get('/reset-timer', 'Auth\TimerLoginAttemtsController@reset');
 
