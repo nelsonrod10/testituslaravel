@@ -18,10 +18,10 @@ class RouteServiceProvider extends ServiceProvider
 
     /**
      * The path to the "home" route for your application.
-     *
+     * en este punto se envía a la modal de login exitoso
      * @var string
      */
-    public const HOME = '/home';
+    public const HOME = '/success-login';
 
     /**
      * Define your route model bindings, pattern filters, etc.

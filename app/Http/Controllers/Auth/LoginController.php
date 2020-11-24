@@ -63,7 +63,9 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $this->validateLogin($request);
-
+        /**
+        * Función sendReqResRequest, para hacer la consulta de login
+        */
         $responseReqRes = $this->sendReqResRequest($request);
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
@@ -88,8 +90,8 @@ class LoginController extends Controller
     }
 
     /**
-     * Verificación de la existencia del usuario en reqres.in
-     */
+    * Verificación de la existencia del usuario en reqres.in
+    */
     private function sendReqResRequest($request){
         $failedMessage=[];
         
@@ -100,19 +102,37 @@ class LoginController extends Controller
         ]);
 
         if($response->status() === 200){
-            Reqresin::firstOrCreate(
-                ['email' => $request[$this->username()]],
-                ['password' => Hash::make($request['password'])] 
-            );
-        }else{
-            /**
-            * Se obtiene el mensaje de error de reqres.in
-            */
-            $failedMessage = json_decode($response->body(),true);
-            return $failedMessage['error'];
+            $this->findUser($request);
+            return ;
         }
 
-        return ;
+        /**
+        * Se obtiene el mensaje de error de reqres.in
+        */
+        $failedMessage = json_decode($response->body(),true);
+        return $failedMessage['error'];
+    }
+
+    /**
+    * Se obtiene o crea el usuario en la BD, para tener las credenciales de ingreso
+    */
+    private function findUser($request)
+    {
+        $user = Reqresin::where('email', $request[$this->username()])->first();
+        
+        if($user->count() > 0){
+            $user->update([
+                'email' => $request[$this->username()],
+                'password' => Hash::make($request['password']) 
+            ]);
+
+            return;
+        }
+
+        Reqresin::create([
+            'email' => $request[$this->username()],
+            'password' => Hash::make($request['password'])
+        ]);
     }
 
     /**

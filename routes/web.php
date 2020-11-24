@@ -22,5 +22,17 @@ Route::get('/', function () {
  */
 Auth::routes(['register' => false]);
 
+/**
+ * Luego del login exitoso se muestra la modal de bienvenida
+ */
+Route::get('/success-login', function(){
+    return view('auth.partials.success-login');
+})->name('success-login');
+
+
+/**
+ * Ruta home para usuarios autorizados
+ */
 Route::get('/home', 'HomeController@index')->name('home');
+
 

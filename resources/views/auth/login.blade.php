@@ -74,7 +74,14 @@
             </div>
         </div>
     </div>
-    <!--error('reqres')-->
-        <failed-login></failed-login>
-    <!--enderror-->
+    @error('reqres')
+    <!--Se incluye el componente modal para indicar un la falla del login, con el mensaje enviado por reqres.in-->
+        <launch-modal
+            type="alert"
+            external_route="{{route('login')}}"
+            title="Alerta, credenciales no válidas"
+            content="{{$message}}"
+        >
+        </launch-modal>
+    @enderror
 @endsection
