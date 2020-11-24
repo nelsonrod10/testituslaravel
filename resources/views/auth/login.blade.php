@@ -40,7 +40,7 @@
                                 </p>
                             @enderror
                         </div>
-
+                        
                         <div class="flex mb-6">
                             <label class="inline-flex items-center text-sm text-gray-700" for="remember">
                                 <input type="checkbox" name="remember" id="remember" class="form-checkbox" {{ old('remember') ? 'checked' : '' }}>
@@ -74,4 +74,7 @@
             </div>
         </div>
     </div>
+    <!--error('reqres')-->
+        <failed-login></failed-login>
+    <!--enderror-->
 @endsection

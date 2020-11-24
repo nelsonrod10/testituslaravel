@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
@@ -63,7 +64,7 @@ class LoginController extends Controller
     {
         $this->validateLogin($request);
 
-        $this->sendReqResRequest($request);
+        $responseReqRes = $this->sendReqResRequest($request);
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
         // the IP address of the client making these requests into this application.
@@ -83,13 +84,14 @@ class LoginController extends Controller
         // user surpasses their maximum number of attempts they will get locked out.
         $this->incrementLoginAttempts($request);
 
-        return $this->sendFailedLoginResponse($request);
+        return $this->sendFailedLoginResponse($request,$responseReqRes);
     }
 
     /**
      * Verificación de la existencia del usuario en reqres.in
      */
     private function sendReqResRequest($request){
+        $failedMessage=[];
         
         $response = Http::post('https://reqres.in/api/login',[
             'Content-Type'  => 'x-www-form-urlencoded',
@@ -102,9 +104,34 @@ class LoginController extends Controller
                 ['email' => $request[$this->username()]],
                 ['password' => Hash::make($request['password'])] 
             );
+        }else{
+            /**
+            * Se obtiene el mensaje de error de reqres.in
+            */
+            $failedMessage = json_decode($response->body(),true);
+            return $failedMessage['error'];
         }
 
-        return;
+        return ;
+    }
+
+    /**
+     * Get the failed login response instance.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function sendFailedLoginResponse(Request $request,$messageReqRes)
+    {
+        /**
+        * Se agrega el mensaje personalizado
+        */
+        throw ValidationException::withMessages([
+            $this->username() => [trans('auth.failed')],
+            'reqres'          =>  $messageReqRes
+        ]);
     }
 
 }
