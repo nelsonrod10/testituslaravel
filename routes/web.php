@@ -33,7 +33,7 @@ Route::get('/success-login', function(){
 /**
  * Ruta home para usuarios autorizados
  */
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home/{page?}', 'HomeController@index')->name('home');
 
 /**
  * Rutas para gestionar el tiempo restante por intentos fallidos de login
