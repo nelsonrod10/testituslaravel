@@ -29,6 +29,13 @@ Route::get('/success-login', function(){
     return view('auth.partials.success-login');
 })->name('success-login');
 
+/**
+ * Luego del logout exitoso se muestra la modal de ida
+ */
+Route::get('/success-logout/{inicio}', function($inicio){
+    return view('auth.partials.success-logout')->with(compact('inicio'));
+})->name('success-logout');
+
 
 /**
  * Ruta home para usuarios autorizados

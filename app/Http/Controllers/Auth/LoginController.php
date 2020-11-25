@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Reqresin;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -83,6 +85,8 @@ class LoginController extends Controller
         }
 
         if ($this->attemptLogin($request)) {
+            /*Variable de sesion con la hora de inicio*/
+            session(['time-start' => Carbon::now('America/Bogota')]);
             return $this->sendLoginResponse($request);
         }
 
@@ -186,6 +190,36 @@ class LoginController extends Controller
                 'minutes' => ceil($seconds / 60),
             ])],
         ])->status(Response::HTTP_TOO_MANY_REQUESTS);
+    }
+
+    /**
+     * Log the user out of the application.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
+    public function logout(Request $request)
+    {
+        /**
+         * Se guarda la variable de inicio de sesion
+         */
+        
+        $inicio = session('time-start');
+        $this->guard()->logout();
+        
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        if ($response = $this->loggedOut($request)) {
+            return $response;
+        }
+
+        return $request->wantsJson()
+            ? new JsonResponse([], 204)
+            : redirect()->route('success-logout',[
+                'inicio' => $inicio
+            ]);
     }
 
 }
