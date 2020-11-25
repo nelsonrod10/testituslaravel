@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 /**
@@ -33,7 +33,13 @@ Route::get('/success-login', function(){
 /**
  * Ruta home para usuarios autorizados
  */
-Route::get('/home/{page?}', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index')->name('home');
+
+/**
+ * Rutas para gestionar los resource list
+ */
+Route::get('/resource-list/{page?}', 'ResourceListController@index');
+Route::get('/resource-search/{page?}/{text?}', 'ResourceListController@search');
 
 /**
  * Rutas para gestionar el tiempo restante por intentos fallidos de login

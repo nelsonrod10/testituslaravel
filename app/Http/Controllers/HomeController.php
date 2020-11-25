@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
 {
@@ -22,13 +21,8 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($page=null)
+    public function index()
     {
-        $response = Http::get('https://reqres.in/api/products',[
-            'page' => $page
-        ]);
-        $list = $response->body();
-        
-        return view('home')->with(compact('list'));
+        return view('home');
     }
 }
