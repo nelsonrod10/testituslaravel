@@ -129,7 +129,7 @@ class LoginController extends Controller
     {
         $user = Reqresin::where('email', $request[$this->username()])->first();
         
-        if($user->count() > 0){
+        if($user !== null){
             $user->update([
                 'email' => $request[$this->username()],
                 'password' => Hash::make($request['password']) 
